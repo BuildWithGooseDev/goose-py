@@ -2,18 +2,38 @@
 
 Server-side SDK for Goose config retrieval and change tracking.
 
-## Install (local repo)
-
-From repo root:
+## Install
 
 ```bash
-pip install -e ./sdks/python
+pip install git+https://github.com/BuildWithGooseDev/goose-py.git
 ```
 
-For packaging and release tooling:
+Pin a release for anything you deploy — any git ref works (tag, branch, commit):
 
 ```bash
-pip install -e ./sdks/python[dev]
+pip install "git+https://github.com/BuildWithGooseDev/goose-py.git@v0.1.0"
+```
+
+In `requirements.txt`:
+
+```
+goose-sdk @ git+https://github.com/BuildWithGooseDev/goose-py.git@v0.1.0
+```
+
+With uv or Poetry:
+
+```bash
+uv add "git+https://github.com/BuildWithGooseDev/goose-py.git"
+poetry add "git+https://github.com/BuildWithGooseDev/goose-py.git"
+```
+
+The distribution is `goose-sdk`; the import is `goose_sdk`.
+
+### Working on the SDK itself
+
+```bash
+pip install -e .          # editable install from a clone
+pip install -e ".[dev]"   # plus packaging and release tooling
 ```
 
 ## Constructor
