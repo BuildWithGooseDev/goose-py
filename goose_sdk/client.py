@@ -28,6 +28,8 @@ import aiohttp
 from .cache import FileCache, PersistentCache
 from ._segments import matches_segment, parse_segment_targeting
 
+SERVER_URL = "https://sdk.buildwithgoose.net"
+
 # How long an SSE stream must stay connected to be judged healthy (resets
 # reconnect backoff and clears the SSE-down marker), and the consecutive
 # reconnect-failure count (SSE-only) after which fallback polling starts.
@@ -320,10 +322,10 @@ class GooseSDK(Mapping[str, Any]):
     def __init__(
         self,
         sdk_client_id: str,
-        server_url: str,
         flagsets: str | Sequence[str],
         connection_type: str | ConnectionType | Sequence[str | ConnectionType] = ConnectionType.POLLING,
         *,
+        server_url: str = SERVER_URL,
         thumbprint: Optional[str] = None,
         sdk_client_secret: Optional[str] = None,
         namespace_name: Optional[str] = None,
@@ -348,8 +350,16 @@ class GooseSDK(Mapping[str, Any]):
         webhook_listener_path: Optional[str] = None,
         auto_connect: bool = True,
     ) -> None:
-        if not sdk_client_id.strip() or not server_url.strip():
-            raise ValueError("sdk_client_id and server_url are required")
+        if not sdk_client_id.strip():
+            raise ValueError("sdk_client_id is required")
+
+        # Catch callers of the pre-0.2 signature, where server_url was the second
+        # positional argument, before a URL silently becomes a flagset name.
+        if isinstance(flagsets, str) and flagsets.strip().lower().startswith(("http://", "https://")):
+            raise ValueError(
+                "flagsets looks like a URL; server_url is now keyword-only and "
+                "optional — pass server_url=... or simply omit it"
+            )
 
         normalized_flagsets = self._normalize_flagsets(flagsets)
         if not normalized_flagsets:
@@ -361,7 +371,7 @@ class GooseSDK(Mapping[str, Any]):
         # flag-only client may omit it. The requirement is enforced below.
         self.sdk_client_secret = (sdk_client_secret or "").strip()
         self.thumbprint = self._resolve_thumbprint(thumbprint)
-        self.server_url = server_url.rstrip("/")
+        self.server_url = (server_url.strip() or SERVER_URL).rstrip("/")
         self.flagsets = normalized_flagsets
         self.connection_types = self._normalize_connection_types(connection_type)
         self.storage_adapter = storage_adapter

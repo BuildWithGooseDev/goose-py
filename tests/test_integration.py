@@ -112,7 +112,7 @@ def test_snapshot_loads_typed_values(stub):
         _flag("max_retries", "number", "3"),
         _flag("theme", "list_of_values", "grid"),
     ]
-    client = GooseSDK("gsc_x", base_url, ["checkout"], auto_connect=False)
+    client = GooseSDK("gsc_x", ["checkout"], server_url=base_url, auto_connect=False)
     client.refresh()
 
     assert client.get_flag("edge_ui") is True
@@ -131,7 +131,7 @@ def test_polling_picks_up_a_delta(stub):
             seen.append((flagset, flag_key, value))
 
     client = GooseSDK(
-        "gsc_x", base_url, ["checkout"], storage_adapter=Adapter(), auto_connect=False
+        "gsc_x", ["checkout"], server_url=base_url, storage_adapter=Adapter(), auto_connect=False
     )
     client.refresh()
     assert client.get_flag("edge_ui") is False
@@ -147,8 +147,8 @@ def test_connect_lifecycle_with_background_polling(stub):
     state.flags = [_flag("edge_ui", "bool", "false")]
     client = GooseSDK(
         "gsc_x",
-        base_url,
         ["checkout"],
+        server_url=base_url,
         connection_type=ConnectionType.POLLING,
         poll_interval_seconds=1,
         auto_connect=True,
@@ -182,7 +182,7 @@ def test_canary_rollout_buckets_deterministically(stub):
             rollout_value="true",
         )
     ]
-    client = GooseSDK("gsc_x", base_url, ["checkout"], auto_connect=False)
+    client = GooseSDK("gsc_x", ["checkout"], server_url=base_url, auto_connect=False)
     client.refresh()
 
     # 73 < 80 -> in the canary cohort -> candidate value.
@@ -206,7 +206,7 @@ def test_canary_without_targeting_key_returns_baseline(stub):
             rollout_value="true",
         )
     ]
-    client = GooseSDK("gsc_x", base_url, ["checkout"], auto_connect=False)
+    client = GooseSDK("gsc_x", ["checkout"], server_url=base_url, auto_connect=False)
     client.refresh()
     # No targeting key -> never leak the feature -> baseline.
     assert client.get_flag("new_checkout") is False
@@ -231,8 +231,8 @@ def test_configs_snapshot_and_change_listeners(stub):
 
     client = GooseSDK(
         "gsc_x",
-        base_url,
         ["checkout"],
+        server_url=base_url,
         sdk_client_secret="sek",
         namespace_name="production",
         configs=["frontend"],
@@ -274,8 +274,8 @@ def test_config_requires_restart_fires_drain(stub):
     }
     client = GooseSDK(
         "gsc_x",
-        base_url,
         ["checkout"],
+        server_url=base_url,
         sdk_client_secret="sek",
         namespace_name="production",
         configs=["database"],
@@ -302,8 +302,8 @@ def test_webhook_registration_and_embedded_listener(stub):
 
     client = GooseSDK(
         "gsc_x",
-        base_url,
         ["HookTest"],
+        server_url=base_url,
         sdk_client_secret="sek",
         connection_type=ConnectionType.WEBHOOK,
         webhook_target_url=f"http://127.0.0.1:{listener_port}/webhook",
@@ -352,8 +352,8 @@ def test_process_webhook_event_rejects_bad_secret(stub):
     base_url, _ = stub
     client = GooseSDK(
         "gsc_x",
-        base_url,
         ["HookTest"],
+        server_url=base_url,
         sdk_client_secret="sek",
         webhook_secret="shh",
         auto_connect=False,

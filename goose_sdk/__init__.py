@@ -3,6 +3,7 @@
 from ._version import __version__
 from .cache import FileCache, PersistentCache
 from .client import (
+    SERVER_URL,
     ConfigChangeEvent,
     ConnectionState,
     ConnectionType,
@@ -15,6 +16,7 @@ from .client import (
 
 __all__ = [
     "__version__",
+    "SERVER_URL",
     "ConfigChangeEvent",
     "ConnectionState",
     "ConnectionType",

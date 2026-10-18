@@ -17,7 +17,7 @@ pip install "git+https://github.com/BuildWithGooseDev/goose-py.git@v0.1.0"
 In `requirements.txt`:
 
 ```
-goose-sdk @ git+https://github.com/BuildWithGooseDev/goose-py.git@v0.1.0
+goose_sdk @ git+https://github.com/BuildWithGooseDev/goose-py.git@v0.1.0
 ```
 
 With uv or Poetry:
@@ -26,8 +26,6 @@ With uv or Poetry:
 uv add "git+https://github.com/BuildWithGooseDev/goose-py.git"
 poetry add "git+https://github.com/BuildWithGooseDev/goose-py.git"
 ```
-
-The distribution is `goose-sdk`; the import is `goose_sdk`.
 
 ### Working on the SDK itself
 
@@ -43,8 +41,7 @@ from goose_sdk import GooseSDK
 
 client = GooseSDK(
     sdk_client_id="gsc_...",
-    sdk_client_secret="...",
-    server_url="http://localhost:8080",
+    sdk_client_secret="...",    # only needed for configs/webhooks
     flagsets=["default"],
     connection_type="polling",  # polling | sse | webhook
     namespace_name="prod",      # optional
@@ -134,7 +131,6 @@ from goose_sdk import GooseSDK, ConfigChangeEvent
 client = GooseSDK(
     sdk_client_id="gsc_...",
     sdk_client_secret="...",
-    server_url="http://localhost:8080",
     flagsets=["default"],            # configs can be watched alongside flags
     namespace_name="production",     # required when watching configs
     configs=["frontend", "database"],  # config NAMES (documents) to watch
@@ -193,7 +189,6 @@ and existing clients behave exactly as they did before.
 client = GooseSDK(
     sdk_client_id="gsc_…",
     sdk_client_secret="…",
-    server_url="https://goose.example.com",
     flagsets="checkout",
     namespace_name="production",
     configs=["frontend"],

@@ -3,14 +3,28 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "goose-sdk"
+# One name everywhere: the distribution and the import are both goose_sdk.
+name = "goose_sdk"
 dynamic = ["version"]
-description = "Python SDK for Goose config service"
+description = "Python SDK for the Goose config service (feature flags, canary rollouts, app configs, webhooks)"
 readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.10"
+keywords = ["goose", "feature-flags", "configs", "sdk"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Typing :: Typed",
+]
 dependencies = [
   "aiohttp>=3.10.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/BuildWithGooseDev/goose-py"
+Issues = "https://github.com/BuildWithGooseDev/goose-py/issues"
 
 [project.optional-dependencies]
 dev = [
@@ -22,11 +36,10 @@ dev = [
 ]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
 include-package-data = true
 
 [tool.setuptools.packages.find]
-where = ["src"]
+include = ["goose_sdk*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "goose_sdk._version.__version__"}

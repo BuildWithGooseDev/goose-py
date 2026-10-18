@@ -8,12 +8,14 @@ From repo root:
 pip install -e ./sdks/python
 ```
 
-The consolidated example also supports a local import fallback from `../src` if you skip install.
+The consolidated example also supports a local import fallback from the project root (`..`) if you skip install.
 
 Set environment variables:
 
 ```bash
-export GOOSE_SERVER_URL=http://localhost:8080
+# GOOSE_SERVER_URL is optional: unset/blank means the Goose service
+# (https://sdk.buildwithgoose.net); it overrides that for development.
+export GOOSE_SERVER_URL=
 export GOOSE_POLL_INTERVAL_SECONDS=3
 export GOOSE_SDK_CLIENT_ID=gsc_xxx
 export GOOSE_SDK_CLIENT_SECRET=xxx

@@ -8,8 +8,8 @@ from typing import Any
 try:
     from goose_sdk import ConfigChangeEvent, ConnectionType, GooseSDK, GooseSDKHTTPError
 except ModuleNotFoundError:
-    local_src = Path(__file__).resolve().parents[1] / "src"
-    sys.path.insert(0, str(local_src))
+    # Local fallback: import straight from the project root if not installed.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from goose_sdk import ConfigChangeEvent, ConnectionType, GooseSDK, GooseSDKHTTPError
 
 
@@ -27,7 +27,7 @@ def load_local_env_file() -> None:
 
 
 def require_sdk_credentials() -> tuple[str, str, str]:
-    server_url = os.getenv("GOOSE_SERVER_URL", "http://localhost:8080")
+    server_url = os.getenv("GOOSE_SERVER_URL", "")
     sdk_client_id = os.getenv("GOOSE_SDK_CLIENT_ID", "")
     # The client secret is only needed for app configs and webhook registration.
     # Flag reads (polling / SSE) authenticate with the client_id alone, so a

@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from goose_sdk.client import (
+    SERVER_URL,
     ConnectionType,
     GooseSDK,
     _bucket_user,
@@ -170,11 +171,25 @@ def _opts(**overrides):
     return base
 
 
-def test_requires_client_id_and_url():
+def test_requires_client_id():
     with pytest.raises(ValueError):
         GooseSDK(**_opts(sdk_client_id=" "))
-    with pytest.raises(ValueError):
-        GooseSDK(**_opts(server_url=" "))
+
+
+def test_server_url_defaults_to_goose_service():
+    opts = _opts()
+    del opts["server_url"]
+    assert GooseSDK(**opts).server_url == SERVER_URL
+    # Blank means "unset", and an explicit URL wins (trailing slash trimmed).
+    assert GooseSDK(**_opts(server_url=" ")).server_url == SERVER_URL
+    assert GooseSDK(**_opts(server_url="http://localhost:8080/")).server_url == "http://localhost:8080"
+
+
+def test_url_passed_as_flagsets_is_rejected():
+    # The pre-0.2 signature took server_url as the second positional argument;
+    # a caller still doing that must get a loud, explanatory error.
+    with pytest.raises(ValueError, match="server_url is now keyword-only"):
+        GooseSDK("gsc_x", "http://localhost:8080", auto_connect=False)
 
 
 def test_requires_a_flagset():
